@@ -20,9 +20,9 @@ let apart x y =
   if x < y then y-x else x-y
 
 
-(** Computes day1 solution given the left and rigth list.
+(** Computes part1 solution given the left and rigth list.
   * Sorts both lists to do it -> nlogn *)
-let day1 left right =
+let part1 left right =
   
   let sorted_left  = List.sort Int.compare left  in
   let sorted_right = List.sort Int.compare right in
@@ -32,5 +32,5 @@ let day1 left right =
 (** main *)
 let () =
   let left, right = read_input () in
-  day1 left right
-  |> print_int; print_newline ()
+  part1 left right |> print_int; 
+  print_newline ()
