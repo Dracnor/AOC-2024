@@ -1,6 +1,12 @@
 # AOC
 *.in
+*.txt
 
+# exe
+*.out
+*.exe
+
+# build
 *.annot
 *.cmo
 *.cma
