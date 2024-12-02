@@ -24,7 +24,8 @@ let read_input () =
       hash_incr count_right (int_of_string r);
       loop (int_of_string l ::left) (int_of_string r ::right)
     with End_of_file -> 
-      left, right, count_right
+      close_in input;
+			left, right, count_right
   in
   loop [] []
   
