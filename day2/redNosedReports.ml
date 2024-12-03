@@ -58,7 +58,7 @@ let is_tolerable report =
   in
   let len = List.length report in
   Seq.init (len+1) (fun n -> remove_ith (len-n) report)
-  |> Seq.exists test 
+  |> Seq.exists test
 
 
 
