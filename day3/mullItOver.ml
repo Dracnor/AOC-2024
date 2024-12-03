@@ -1,12 +1,17 @@
 (* Day3 : Mull It Over *)
 
-let input_file = "demo.in"
+let input_file = "input.in"
 
+(** Returns the input and returns it as a big string *)
 let read_input () =
   let input = open_in input_file in
-  let str = input_line input in
+  let rec loop str_list =
+    try loop ((input_line input) :: str_list)
+    with End_of_file -> List.rev str_list 
+  in
+  let str_list = loop [] in
   close_in input;
-  str
+  String.concat "" str_list
 
 
 (* I'll use regex from the Re module. Compilation line :
@@ -27,7 +32,8 @@ let multiply mul_string =
   Scanf.sscanf mul_string "mul(%d,%d)" (fun a b -> a*b)
   
 
-let part1 str =
+(** Does part1. memory is the whole input *)
+let part1 memory =
   Re.Seq.matches regex_mul str
   |> Seq.map multiply
   |> Seq.fold_left (+) 0
