@@ -1,7 +1,7 @@
 (* Day3 : Mull It Over *)
 
 (* I'll use regex from the Re module. Compilation line :
-      ocamlopt -package re -linkpkg mullItOver.ml
+      ocamlfind ocamlopt -package re -linkpkg mullItOver.ml
    NB : yes it would be cleaner with dune. I'm lazy.
 *)
 
