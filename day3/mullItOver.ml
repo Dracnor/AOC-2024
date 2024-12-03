@@ -63,7 +63,7 @@ let regex_part2 =
 let part2 memory =
 
   (** Updates sum (sum of previous mul) and enabled 
-    * according to the regex_part2 matching str.
+    * according to a regex_part2 matching.
     * Will be folded. *)
   let update (sum, enabled) = function
     | "do()" -> (sum, true)
