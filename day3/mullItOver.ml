@@ -23,8 +23,8 @@ let read_input () =
 
 (** Regex that matches mul([0-9]+,[0-9]+)  *) 
 let regex_mul =
-  Re.([str "mul("; rep1 digit; str ","; rep1 digit; str ")"])
-  |> Re.seq
+  let open Re in
+  seq [ str "mul("; rep1 digit; str ","; rep1 digit; str ")"]
   |> Re.compile
 
 
@@ -42,20 +42,20 @@ let part1 memory =
 
 (* part 2 *)
 
-(* I'll add two new regex, use the union of them, and memorise
-   the enabled/disabled state as I go through matches.
+(* I change my regex to also match do() and don().
+   I then go through matches, updating the 
+   enabled/disabled status.
    I would have loved to do it as a big regexp, but Re doesn't
    allow the complementary of a regexp :'( *)
 
 
-(** Regex that matches a mul, a "do()" or a "don't()" *)
+(** Regex that matches a mul OR a "do()" OR a "don't()" *)
 let regex_part2 =
   let open Re in
-  [ seq [str "mul("; rep1 digit; str ","; rep1 digit; str ")"];
-    str "do()";
-    str "don't()"
-  ]
-  |> alt
+  alt [ seq [str "mul("; rep1 digit; str ","; rep1 digit; str ")"];
+        str "do()";
+        str "don't()"
+      ]
   |> compile
 
 
