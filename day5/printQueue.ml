@@ -1,6 +1,6 @@
 (* Day 5 : Print Queue. *)
 
-(* ASSUMPTION : EACH PAGE ONLY APPEAR ONCE IN AN UPDATE. *)
+(* ASSUMPTION : EACH PAGE APPEAR AT MOST ONCE IN AN UPDATE. *)
 (* I'll stores rules as a (x,y) Hashtbl, and each line as a int array *)
 
 
@@ -43,6 +43,7 @@ let cmp_page rules x y =
 
 (** main AND input reading *)
 let () =
+
   (* Read rules *)
   let i_c = open_in input_file in
   let rules = Hashtbl.create 1200 in (* input has ~1200 rules *)
@@ -75,4 +76,5 @@ let () =
   in
   update_loop ();
   close_in i_c;
+
   Printf.printf "part1 : %d\npart2 : %d\n" !part1 !part2
