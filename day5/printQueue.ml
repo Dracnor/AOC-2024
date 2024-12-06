@@ -55,15 +55,19 @@ let () =
   in 
   rules_loop ();
   
+  (** Reads one update. Raises End_of_file if eof *)
+  let read_one_update () =
+    input_line i_c 
+    |> String.split_on_char ',' 
+    |> List.map int_of_string
+    |> Array.of_list
+  in
   (* Read each update and computes its middle page *)
   let part1 = ref 0 in
   let part2 = ref 0 in
   let rec update_loop () =
     try
-      let update = input_line i_c 
-                   |> String.split_on_char ',' 
-                   |> List.map int_of_string
-                   |> Array.of_list            in
+      let update = read_one_update () in
       if is_well_ordered rules update then
         part1 := !part1 + update.(Array.length update /2)
       else begin
