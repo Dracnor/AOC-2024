@@ -74,7 +74,7 @@ let bigger_p10 a =
 
 (** Concatenates two ints. Efficient.
     Makes the whole program 33% faster. Not that I needed it. *)
-let fast_int_cat x y =
+let int_cat x y =
   x * (bigger_p10 y) + y
   
 
@@ -85,9 +85,7 @@ let part2_solvable total (test_value, numbers) =
   let rec loop acc = function
     | _ when acc > test_value -> false
     | [] -> acc = test_value
-    | h :: t ->    loop (acc * h) t 
-                || loop (acc + h) t 
-                || loop (fast_int_cat acc h) t
+    | h :: t -> loop (acc * h) t || loop (acc + h) t || loop (int_cat acc h) t
   in
   total + (if loop (List.hd numbers) (List.tl numbers) then test_value else 0)
 
