@@ -57,11 +57,26 @@ let part1 eq_list =
 (* Same but with a new operator.
    I could do both part at once, but I find it cleaner this way. *)
 
-(** Concatenates two int *)
-let int_cat x y =
+(** Concatenates two int. Easy. *)
+let slow_int_cat x y = 
   (string_of_int x) ^ (string_of_int y)
   |> int_of_string
 
+
+(* For fun : let's do a faster in_cat *)
+(** Returns the smallest power of 10 > a *)
+let bigger_p10 a =
+  let rec loop p10 =
+    if p10 > a then p10 else loop (10*p10)
+  in
+  loop 1
+
+
+(** Concatenates two ints. Efficient.
+    Makes the whole program 33% faster. Not that I needed it. *)
+let fast_int_cat x y =
+  x * (bigger_p10 y) + y
+  
 
 (** Same as part1 but with part2 ruleset. *)
 let part2_solvable total (test_value, numbers) =
@@ -70,7 +85,9 @@ let part2_solvable total (test_value, numbers) =
   let rec loop acc = function
     | _ when acc > test_value -> false
     | [] -> acc = test_value
-    | h :: t -> loop (acc * h) t || loop (acc + h) t || loop (int_cat acc h) t
+    | h :: t ->    loop (acc * h) t 
+                || loop (acc + h) t 
+                || loop (fast_int_cat acc h) t
   in
   total + (if loop (List.hd numbers) (List.tl numbers) then test_value else 0)
 
