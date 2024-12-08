@@ -43,12 +43,19 @@ let read_input () =
 
 (* Part 1 *)
 
+(** Checks that (x,y) is within the borders *)
+let inmap dim (x,y) = 
+     0 <= x && x < dim (* x is within bound *)
+  && 0 <= y && y < dim (* y is within bound *)
+
+
 (* Seems like the expected distance is the euclidian one.
    But instead of working on distance, I'll work on vectors :
    the vector from an antinode to one antenna is the double of 
    the vector from that antenna to the other antinode *)
 
-(** Returns the list of the inmap antinodes associated to (i,j) and (k,l). *)
+(** Returns the list of the inmap antinodes associated to (i,j) and (k,l);
+  * using part1 ruleset. *)
 let part1_antinodes dim (i,j) (k,l) =
   (* each solution is the only solution of one of the two eq below :
      E0:    (x,y) - (i,j) = 2 ((x,y) - (k,l))    -> point closer to (k,l)
@@ -60,13 +67,9 @@ let part1_antinodes dim (i,j) (k,l) =
   *)
   if (i,j) = (k,l) then 
     [] 
-  else 
-    let inmap (x,y) =
-         0 <= x && x < dim (* x is within bound *)
-      && 0 <= y && y < dim (* y is within bound *)
-    in
+  else
     [(2*k-i, 2*l-j) ; (2*i-k, 2*j-l)]
-    |> List.filter inmap
+    |> List.filter (inmap dim)
 
 
 
@@ -95,21 +98,39 @@ let number_of_antinodes get_antinodes dim antennas =
   Array.fold_left add_antinodes [] antennas 
   |> List.sort_uniq Stdlib.compare
   |> List.length
-      
+
+
 
 
 (* Part 2 *)
 
-(* Explain (very smartly) here if necessary *)
+(** Returns greatest common divisor of a and b *)
+let rec gcd a b =
+  if b = 0 then a else gcd b (a mod b)
 
-let part2 input =
-  -666
-  
-  
-(* TODO  :
-  - creer antinodes_part2. Pour cela, calculer (i,j)-(k,l), le simplifier (!!),
-    puis s'en servir pour calculer tous les points alignés. Ca devrait marcher
-    (sauf si les maths c'est relou) *)
+
+(** Returns the list of the inmap antinodes associated to (i,j) and (k,l);
+  * using part1 ruleset. *)
+let part2_antinodes dim (i,j) (k,l) =
+  (* To compute antinodes associated to (i,j) and (k,l) :
+     - compute (a,b) = (i,j) - (k,l)
+     - simplify it by gcd, name (dx, dy) the result
+     - antinodes are all inmap (i,j) + n.(dx,dy) with n integer
+  *)
+  if (i,j) = (k,l) then 
+    [] 
+  else
+    let (a, b) = (i-k , j-l) in
+    let (dx, dy) = (a / (gcd a b) , b / (gcd a b)) in
+    (** Loop to compute all (i,j) + n.(dx,dy) with sign n = dir *)
+    let rec loop dir (x,y) =
+      if inmap dim (x,y) then 
+        (x,y) :: ( loop dir (x + dir*dx, y + dir*dy) )
+      else
+        []
+    in
+    (loop 1 (i,j)) @ (loop (-1) (i,j))
+    |> List.filter (inmap dim)
 
 
 
@@ -118,13 +139,5 @@ let part2 input =
 let () =
   let dim, antennas = read_input () in
   let answer_part1 = number_of_antinodes part1_antinodes dim antennas in
-  Printf.printf "%d\n" (answer_part1)
-  (*
-  for c = 0 to 127 do
-  Printf.printf "%c : " (char_of_int c);
-  List.iter (fun (x,y) -> Printf.printf "(%d,%d)" x y) antennas.(c);
-  print_newline ()
-  done
-*)
-
-
+  let answer_part2 = number_of_antinodes part2_antinodes dim antennas in
+  Printf.printf "%d\n%d\n" (answer_part1) (answer_part2)
