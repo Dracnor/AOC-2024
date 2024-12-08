@@ -1,4 +1,8 @@
-(* Day X : title *)
+(* Day 8 : resonant Collinearity *)
+
+(* Rmk : I don't like my code for today;
+	 it's uselessly complicated *)
+
 
 (** input_file name is read from argv *)
 let input_file = 
@@ -115,7 +119,8 @@ let part2_antinodes dim (i,j) (k,l) =
   (* To compute antinodes associated to (i,j) and (k,l) :
      - compute (a,b) = (i,j) - (k,l)
      - simplify it by gcd, name (dx, dy) the result
-     - antinodes are all inmap (i,j) + n.(dx,dy) with n integer
+     - antinodes are all inmap (i,j) + n.(dx,dy) with n>=0 integer
+       (n<=0 will be computed in (k,l) and (i,j))
   *)
   if (i,j) = (k,l) then 
     [] 
@@ -123,7 +128,7 @@ let part2_antinodes dim (i,j) (k,l) =
     let (a, b) = (i-k , j-l) in
     let (dx, dy) = (a / (gcd a b) , b / (gcd a b)) in
     (** Loop to compute all (i,j) + n.(dx,dy) with sign n = dir *)
-    let rec loop dir (x,y) =
+    let rec loop (x,y) =
       if inmap dim (x,y) then 
         (x,y) :: ( loop dir (x + dir*dx, y + dir*dy) )
       else
