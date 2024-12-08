@@ -49,7 +49,7 @@ let read_input () =
    the vector from that antenna to the other antinode *)
 
 (** Returns the list of the inmap antinodes associated to (i,j) and (k,l). *)
-let antinodes dim (i,j) (k,l) =
+let part1_antinodes dim (i,j) (k,l) =
   (* each solution is the only solution of one of the two eq below :
      E0:    (x,y) - (i,j) = 2 ((x,y) - (k,l))    -> point closer to (k,l)
      E1:    (x,y) - (k,l) = 2 ((x,y) - (i,j))    -> point closer to (i,j)
@@ -69,29 +69,29 @@ let antinodes dim (i,j) (k,l) =
     |> List.filter inmap
 
 
-(* I confess : I might like to fold a bit too much *)
 
 (** I'll compute the list of all inmap antinodes, then sort_uniq it *)
-let part1 dim antennas =
+let number_of_antinodes get_antinodes dim antennas =
+
+  (** Adds the antinodes associated to any ((i,j) and (k,l)) from coordinates
+    * to anti_lst *)
+  let add_antinodes anti_lst coordinates =
   
-  (** Given anti_lst a list of antinodes, and same_freq_coo a list of
-    * coordinates of same-frequency antennas, adds to anti_lst
-    * the inmap antinodes created those antennas.
-    * Will be folded.
-    * 
-    * Complexity : (length same_freq_coo)² *)
-  let add_antinodes anti_lst same_freq_coo =
-    (** Same but for a fixed (i,j). *)
-    let add_antinodes_from_i_j anti_lst (i,j) =
-      (** Same but for a fixed (i,j) and (k,l) *)
-      let aux anti_lst (k,l) = 
-        (antinodes dim (i,j) (k,l)) @ anti_lst
-      in
-      List.fold_left aux anti_lst same_freq_coo
+    (** Same with fixed (i,j) and (k,l) *)
+    let add_antinodes_ij_kl ij anti_lst kl =
+      (get_antinodes dim ij kl) @ anti_lst
     in
-    List.fold_left add_antinodes_from_i_j anti_lst same_freq_coo
+    (** Same with fixed (i,j) and any (k,l) from coordinates *)
+    let add_antinodes_ij anti_lst ij =
+      List.fold_left (add_antinodes_ij_kl ij) anti_lst coordinates
+    in
+    (* for each ij in coordinates :
+        for each kl in coordinates : 
+          add antinodes *)
+    List.fold_left add_antinodes_ij anti_lst coordinates
   in
   
+  (* Computes the antinodes for every frequency, then sort_uniq it. *)
   Array.fold_left add_antinodes [] antennas 
   |> List.sort_uniq Stdlib.compare
   |> List.length
@@ -106,18 +106,19 @@ let part2 input =
   -666
   
   
-(* TODO après manger :
-  - changer part1 en "number_of_antinodes" qui prend en argument la fonction
-    antinodes
-  - renommer antinodes en antinodes_part1
+(* TODO  :
   - creer antinodes_part2. Pour cela, calculer (i,j)-(k,l), le simplifier (!!),
     puis s'en servir pour calculer tous les points alignés. Ca devrait marcher
     (sauf si les maths c'est relou) *)
 
+
+
+
 (** main *)
 let () =
   let dim, antennas = read_input () in
-  Printf.printf "%d\n" (part1 dim antennas)
+  let answer_part1 = number_of_antinodes part1_antinodes dim antennas in
+  Printf.printf "%d\n" (answer_part1)
   (*
   for c = 0 to 127 do
   Printf.printf "%c : " (char_of_int c);
