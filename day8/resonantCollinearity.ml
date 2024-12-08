@@ -128,7 +128,7 @@ let part2_antinodes dim (i,j) (k,l) =
     let (a, b) = (i-k , j-l) in
     let (dx, dy) = (a / (gcd a b) , b / (gcd a b)) in
     (** Loop to compute all (i,j) + n.(dx,dy) with sign n = dir *)
-    let rec loop (x,y) =
+    let rec loop dir (x,y) =
       if inmap dim (x,y) then 
         (x,y) :: ( loop dir (x + dir*dx, y + dir*dy) )
       else
